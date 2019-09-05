@@ -1,0 +1,91 @@
+.main-container {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 10px 0;
+    text-align: center;
+}
+
+.main-container .ulweb {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(1, 1fr); 
+    grid-gap: 5px;
+    margin-top: 5px;
+}
+
+.main-container .ulmob {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(1, 1fr); 
+    grid-gap: 5px;
+    margin-left: 5px;
+}
+
+.btnweb {
+    visibility: visible;
+    height: initial;
+    width: initial;
+}
+
+
+.btnmob {
+    visibility: hidden;
+}
+
+.main-container ul li {
+    display: flex;
+    flex-direction: row;
+    cursor: pointer; 
+}
+.main-container ul .liweb {
+    display: flex;
+    flex-direction: row;
+    cursor: pointer; 
+}
+
+.main-container ul .limob {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer; 
+    max-width: 300px;
+}
+
+.main-container ul li img {
+	width: 300px;
+    max-width: 300px;
+	display: block;
+    border-radius: 5px 5px 5px 5px;
+    cursor: pointer; 
+    height: 190px;	
+    left: 0;
+}
+
+.main-container footer {
+    flex: 1;
+    background: #FFF;
+    border: 1px solid #eee;
+    padding: 15px 20px;
+    text-align: left;
+    border-radius: 0 0 5px 5px;
+    cursor: pointer; 
+    flex-direction: column;
+}
+
+.main-container ul li footer strong {
+    font-size: 16px;
+    color: #333;
+}
+
+.main-container ul li footer p {
+    font-size: 14px;
+    line-height: 20px;
+    color: #999;
+    margin-top: 5px;
+}
+
+.main-container .empty {
+    font-size: 32px;
+    color: #999;
+    font-weight: bold;
+    margin-top: 300px;
+}
