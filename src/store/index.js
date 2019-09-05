@@ -1,24 +1,21 @@
-import { applyMiddleware, createStore, compose } from "redux";
-import { connectRouter, routerMiddleware } from "connected-react-router";
-import thunk from "redux-thunk";
+import createSagaMiddleware from 'redux-saga';
 
-import history from "../history";
-import rootReducer from './reducers';
+import createStore from './createStore';
 
-const initialState = {};
+import rootReducer from './modules/rootReducer';
+import rootSagas from './modules/rootSagas';
 
-const middleware = [
-    routerMiddleware(history),
-    thunk
-];
+const sagaMonitor =
+  process.env.NODE_ENV === 'development'
+    ? console.tron.createSagaMonitor()
+    : null;
 
+const sagaMiddleware = createSagaMiddleware({ sagaMonitor });
 
-const store = createStore(
-  connectRouter(history)(rootReducer),
-  initialState,
-  compose(
-      applyMiddleware(...middleware)
-  )
-);
+const middlewares = [sagaMiddleware];
 
-export default store;
+const store = createStore(rootReducer, middlewares);
+
+sagaMiddleware.run(rootSagas);
+
+export { store };
