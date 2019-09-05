@@ -6,26 +6,17 @@ import {isMobile} from 'react-device-detect';
 import api from '../services/api';
 
 export default function Detalhe({ match }){
-    const [usuario, setUsuario] = useState('');
+    const [post, setPost] = useState('');
     const [layout, setLayout] = useState(null);
       
     useEffect(() => {
-        async function loadUsuario(){
+        async function loadPost(){
 
-          // Aqui estou simulando uma busca de um unico usuario a api, pois nao tem essa roda criada  
-          const response = await api.get(`/users`);
-
-          const vidusuario = match.params.id;
+          const vidpost = match.params.id;
           
-          let todosusuarios = response.data;          
-
-          let usuariodetalhe = todosusuarios.filter( function (user) {
-            return user.id == vidusuario
-          });
-  
-          setUsuario(usuariodetalhe[0]);  
-          //
+          const response = await api.get(`/posts?id=${vidpost}`);
           
+          setPost(response.data[0]);
 
           if (isMobile) {
             setLayout('mob');   
@@ -34,15 +25,15 @@ export default function Detalhe({ match }){
           }
         }
   
-        loadUsuario();
+        loadPost();
     }, [match.params.id]);
 
     useEffect(() => {
         
-        if (usuario.name)
-        document.title = usuario.name;
+        if (post.title)
+        document.title = post.title;
         
-    }, [usuario]);   
+    }, [post]);   
 
 
     return (
@@ -55,11 +46,11 @@ export default function Detalhe({ match }){
             <br></br>
 
             <div className={"leitura"}> 
-                <strong className={"titulo"+layout}>{usuario.name}</strong>
+                <strong className={"titulo"+layout}>{post.title}</strong>
                 <br />                
-                <strong>{usuario.username}</strong>
+                <strong>User Id:{post.userId}</strong>
                 <br />  
-                <p>E-Mail: {usuario.email}</p>               
+                <p>Detail: {post.body}</p>               
             </div> 
 
             <br></br>

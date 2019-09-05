@@ -8,7 +8,7 @@ export default function Routes(){
     return (        
         <BrowserRouter>
         <Route path="/" exact component={Main} />
-        <Route path="/usuario/:id" exact component={Detalhe} />
+        <Route path="/posts/:id" exact component={Detalhe} />
         </BrowserRouter>
     );
 }

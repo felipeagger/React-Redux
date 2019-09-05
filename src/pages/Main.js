@@ -9,18 +9,28 @@ import api from '../services/api';
 //import logo from '../assets/logo.svg';
 
 export default function Main({ history, match }){
-    const [usuarios, setUsuarios] = useState([]);
+    const [posts, setPosts] = useState([]);
     //const [page, setPage] = useState(1);   
-    var page; 
+    //var page; 
+    let [page] = useState(1);
+
+    if (localStorage.getItem("posicaoScroll") === undefined &&
+        localStorage.getItem("posicaoScroll") === null
+      ) {
+        localStorage.setItem("posicaoScroll", JSON.stringify(0));
+      }
 
     const [layout, setLayout] = useState(null);
+    const [posicao, setPosicao] = useState(
+        JSON.parse(localStorage.getItem("posicaoScroll"))
+      );
 
     useEffect(() => {
       async function loadDados(){
         
-        const response = await api.get('/users');
+        const response = await api.get('/posts?_start=0&_limit=10'); 
 
-        setUsuarios(response.data);
+        setPosts(response.data);
         //setPage(page + 1);
         page = 1;
 
@@ -30,11 +40,38 @@ export default function Main({ history, match }){
           setLayout('web');
         }
 
-    }
+        let scrollpos = localStorage.getItem("posicaoScroll");
 
+        if (scrollpos !== undefined && scrollpos !== null) {
+            /* Timeout necessário para funcionar no Chrome */
+
+            if (scrollpos <= 100)
+            scrollpos = 0;
+
+            console.log(scrollpos); //JSON.parse(scrollpos)
+            setTimeout(function() {
+            window.scrollTo(0, scrollpos);
+            }, 1);
+        } 
+
+
+        
+      };
+       
       loadDados();
+      
     }, []);
 
+    useEffect(() => {       
+
+      /* Verifica mudanças no Scroll e salva no localStorage a posição */
+       window.onscroll = function(e) {
+        setPosicao(window.scrollY);
+        localStorage.setItem("posicaoScroll", JSON.stringify(posicao));
+      }           
+      
+        return () => {};
+      }, [posicao, page, setPosicao]);
 
 
     useEffect(() => {
@@ -45,14 +82,16 @@ export default function Main({ history, match }){
 
     /* Scroll infinito nao ta funcionando pq nao ta disparando evento ao chegar no final da pagina, talvez calculo esteja errado */
     async function handleScroll() {
-    
+
+        console.log(document.documentElement.scrollTop);
+
          //if (((document.documentElement.scrollTop) / (page * window.innerHeight)) / page >= 5.80) {
-        if (((document.documentElement.scrollTop) / 2400) >= page) {
+        if (((document.documentElement.scrollTop) / 1350) >= page) {
 
             page = page + 1;
 
             //Comentei para nao da erro
-            //fetchMoreListItems(page - 1);
+            fetchMoreListItems(page - 1);
 
         } else {
             return;
@@ -61,14 +100,9 @@ export default function Main({ history, match }){
 
     async function fetchMoreListItems(pagecount) {        
         
-        //é so uma url ficticia, nao existe, se o consol.log aparecer é pq deu certo
-        console.log('Buscou mais...');
+        const response = await api.get(`/posts?_start=${pagecount * 10}&_limit=10`);       
 
-        /*
-        const response = await api.get(`/users?page=${pagecount}/15`);             
-
-        setUsuarios(prevState => ([...prevState, ...response.data]));
-        */      
+        setPosts(prevState => ([...prevState, ...response.data]));    
     }
 
     //------
@@ -80,16 +114,16 @@ export default function Main({ history, match }){
               
                <div className="main-container">        
 
-                    { usuarios.length > 0 ? (
+                    { posts.length > 0 ? (
                     <ul id="ullist" className={"main-container ul"+layout}> 
-                        {usuarios.map(usuario => (
-                            <Link to={`/usuario/${usuario.id}`} >
-                                <li id="lilist" className={"main-container li"+layout} key={usuario.id}>
+                        {posts.map(post => (
+                            <Link to={`/posts/${post.id}`} >
+                                <li id="lilist" className={"main-container li"+layout} key={post.id}>
 
                                     <img src='https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png'/>
                        
                                     <footer>                                       
-                                        <strong>{usuario.username}</strong>                                       
+                                        <strong>{post.title}</strong>                                       
                                     </footer>
                                 
                                 </li>
@@ -97,7 +131,7 @@ export default function Main({ history, match }){
                         ))}     
                     </ul>     
                     ) : (
-                        <div className="empty">Nenhum Usuario :(</div>
+                        <div className="empty">Nenhum Post :(</div>
                     ) }    
             </div>
         </div>
