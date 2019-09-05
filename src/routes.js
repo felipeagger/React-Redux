@@ -1,14 +1,19 @@
 import React from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
+import { ConnectedRouter } from "connected-react-router";
 
 import Main from './pages/Main';
 import Detalhe from './pages/Detalhe';
 
+import history from "./history";
+
 export default function Routes(){
     return (        
-        <BrowserRouter>
-        <Route path="/" exact component={Main} />
-        <Route path="/posts/:id" exact component={Detalhe} />
-        </BrowserRouter>
+        <ConnectedRouter history={history}>
+        <Switch>
+            <Route path="/" exact component={Main} />
+            <Route path="/posts/:id" exact component={Detalhe} />
+        </Switch>
+        </ConnectedRouter>
     );
 }

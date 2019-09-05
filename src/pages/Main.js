@@ -6,32 +6,50 @@ import Navbar2 from '../components/Navbar';
 import {isMobile} from 'react-device-detect';
 import api from '../services/api';
 
-//import logo from '../assets/logo.svg';
+import { connect } from "react-redux";
+import * as DataActions from "../store/actions";
+import { bindActionCreators } from 'redux';
 
-export default function Main({ history, match }){
-    const [posts, setPosts] = useState([]);
-    //const [page, setPage] = useState(1);   
-    //var page; 
+function Main({ history, match, dataSave, posts }){ 
+    
+   /* Nao e mais um state local */
+   // const [posts, setPosts] = useState([]);
+
     let [page] = useState(1);
 
+    /*
     if (localStorage.getItem("posicaoScroll") === undefined &&
         localStorage.getItem("posicaoScroll") === null
       ) {
         localStorage.setItem("posicaoScroll", JSON.stringify(0));
       }
+    */  
 
     const [layout, setLayout] = useState(null);
+
+    /*
     const [posicao, setPosicao] = useState(
         JSON.parse(localStorage.getItem("posicaoScroll"))
       );
+    */  
 
     useEffect(() => {
       async function loadDados(){
         
         const response = await api.get('/posts?_start=0&_limit=10'); 
 
-        setPosts(response.data);
-        //setPage(page + 1);
+        //Agora seta via redux
+        //setPosts(response.data);
+
+        console.log('Get da API');
+        console.log(response.data);
+
+        dataSave(response.data); 
+
+        //Teoricamente era para aparecer os posts no console agora
+        console.log('Estado no Redux');
+        console.log(posts);
+
         page = 1;
 
         if (isMobile) {
@@ -40,10 +58,11 @@ export default function Main({ history, match }){
           setLayout('web');
         }
 
+        /*
         let scrollpos = localStorage.getItem("posicaoScroll");
 
         if (scrollpos !== undefined && scrollpos !== null) {
-            /* Timeout necessário para funcionar no Chrome */
+            // Timeout necessário para funcionar no Chrome 
 
             if (scrollpos <= 100)
             scrollpos = 0;
@@ -53,7 +72,7 @@ export default function Main({ history, match }){
             window.scrollTo(0, scrollpos);
             }, 1);
         } 
-
+        */
 
         
       };
@@ -62,9 +81,10 @@ export default function Main({ history, match }){
       
     }, []);
 
+    /*
     useEffect(() => {       
 
-      /* Verifica mudanças no Scroll e salva no localStorage a posição */
+      // Verifica mudanças no Scroll e salva no localStorage a posição 
        window.onscroll = function(e) {
         setPosicao(window.scrollY);
         localStorage.setItem("posicaoScroll", JSON.stringify(posicao));
@@ -72,6 +92,8 @@ export default function Main({ history, match }){
       
         return () => {};
       }, [posicao, page, setPosicao]);
+
+    */
 
 
     useEffect(() => {
@@ -102,7 +124,10 @@ export default function Main({ history, match }){
         
         const response = await api.get(`/posts?_start=${pagecount * 10}&_limit=10`);       
 
-        setPosts(prevState => ([...prevState, ...response.data]));    
+        //Agora seta via Redux
+        //setPosts(prevState => ([...prevState, ...response.data]));    
+        dataSave(response.data); // Isso é equivalente a linha acima?
+
     }
 
     //------
@@ -137,3 +162,17 @@ export default function Main({ history, match }){
         </div>
     );
 }
+
+
+const mapStateToProps = state => ({
+  posts: state.posts
+});
+
+const mapDispatchToProps = dispatch =>
+bindActionCreators(DataActions, dispatch);
+
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Main);
