@@ -1,61 +1,57 @@
 import React, { useState, useEffect } from 'react';
 import './Detalhe.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { isMobile } from 'react-device-detect';
 import Navbar from '../components/Navbar';
-import {isMobile} from 'react-device-detect';
 import api from '../services/api';
 
-export default function Detalhe({ match }){
-    const [post, setPost] = useState('');
-    const [layout, setLayout] = useState(null);
-      
-    useEffect(() => {
-        async function loadPost(){
+export default function Detalhe({ match }) {
+  const [post, setPost] = useState('');
+  const [layout, setLayout] = useState(null);
 
-          const vidpost = match.params.id;
-          
-          const response = await api.get(`/posts?id=${vidpost}`);
-          
-          setPost(response.data[0]);
+  useEffect(() => {
+    async function loadPost() {
+      const vidpost = match.params.id;
 
-          if (isMobile) {
-            setLayout('mob');   
-          } else {    
-            setLayout('web');
-          }
-        }
-  
-        loadPost();
-    }, [match.params.id]);
+      const response = await api.get(`/posts?id=${vidpost}`);
 
-    useEffect(() => {
-        
-        if (post.title)
-        document.title = post.title;
-        
-    }, [post]);   
+      setPost(response.data[0]);
 
+      if (isMobile) {
+        setLayout('mob');
+      } else {
+        setLayout('web');
+      }
+    }
 
-    return (
-        <div>
-            <Navbar/> 
-            <div className={"detalhe-container"+layout}>
-            
-            <img src='https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png'/>
-             
-            <br></br>
+    loadPost();
+  }, [match.params.id]);
 
-            <div className={"leitura"}> 
-                <strong className={"titulo"+layout}>{post.title}</strong>
-                <br />                
-                <strong>User Id:{post.userId}</strong>
-                <br />  
-                <p>Detail: {post.body}</p>               
-            </div> 
+  useEffect(() => {
+    if (post.title) document.title = post.title;
+  }, [post]);
 
-            <br></br>
-            
-            </div>
+  return (
+    <div>
+      <Navbar />
+      <div className={`detalhe-container${layout}`}>
+        <img
+          src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
+          alt="Avatar"
+        />
+
+        <br />
+
+        <div className="leitura">
+          <strong className={`titulo${layout}`}>{post.title}</strong>
+          <br />
+          <strong>User Id:{post.userId}</strong>
+          <br />
+          <p>Detail: {post.body}</p>
         </div>
-    );
+
+        <br />
+      </div>
+    </div>
+  );
 }

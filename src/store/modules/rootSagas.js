@@ -1,4 +1,4 @@
- import { all } from 'redux-saga/effects';
+import { all } from 'redux-saga/effects';
 
 import post from './post/sagas';
 
