@@ -1,49 +1,72 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+
 import { Link } from 'react-router-dom';
+
 import './Main.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+import { isMobile } from 'react-device-detect';
 import Navbar2 from '../components/Navbar';
-import {isMobile} from 'react-device-detect';
+
 import api from '../services/api';
 
-//import logo from '../assets/logo.svg';
+import { addPostRequest } from '../store/modules/post/actions';
 
-export default function Main({ history, match }){
-    const [posts, setPosts] = useState([]);
-    //const [page, setPage] = useState(1);   
-    //var page; 
-    let [page] = useState(1);
+export default function Main({ history, match }) {
+  const dispatch = useDispatch();
+  const posts = useSelector(state => state.posts);
 
+  /* Nao e mais um state local */
+  const [posters, setPosters] = useState([]);
+
+  let [page, setPage] = useState(1);
+
+  /*
     if (localStorage.getItem("posicaoScroll") === undefined &&
         localStorage.getItem("posicaoScroll") === null
       ) {
         localStorage.setItem("posicaoScroll", JSON.stringify(0));
       }
+    */
 
-    const [layout, setLayout] = useState(null);
+  const [layout, setLayout] = useState(null);
+
+  /*
     const [posicao, setPosicao] = useState(
         JSON.parse(localStorage.getItem("posicaoScroll"))
       );
+    */
 
-    useEffect(() => {
-      async function loadDados(){
-        
-        const response = await api.get('/posts?_start=0&_limit=10'); 
+  useEffect(() => {
+    async function loadDados() {
+      const response = await api.get('/posts?_start=0&_limit=10');
 
-        setPosts(response.data);
-        //setPage(page + 1);
-        page = 1;
+      // Agora seta via redux
+      // setPosts(response.data);
 
-        if (isMobile) {
-          setLayout('mob');   
-        } else {    
-          setLayout('web');
-        }
+      // console.log('Get da API');
+      // console.tron.log(response.data);
 
+      // dataSave(response.data);
+
+      // Teoricamente era para aparecer os posts no console agora
+      // console.log('Estado no Redux');
+      // console.log(posts);
+
+      page = 1;
+
+      if (isMobile) {
+        setLayout('mob');
+      } else {
+        setLayout('web');
+      }
+
+      /*
         let scrollpos = localStorage.getItem("posicaoScroll");
 
         if (scrollpos !== undefined && scrollpos !== null) {
-            /* Timeout necessário para funcionar no Chrome */
+            // Timeout necessário para funcionar no Chrome
 
             if (scrollpos <= 100)
             scrollpos = 0;
@@ -52,35 +75,35 @@ export default function Main({ history, match }){
             setTimeout(function() {
             window.scrollTo(0, scrollpos);
             }, 1);
-        } 
+        }
+        */
+      setPosters(response.data);
+    }
 
+    loadDados();
+  }, []);
 
-        
-      };
-       
-      loadDados();
-      
-    }, []);
+  /*
+    useEffect(() => {
 
-    useEffect(() => {       
-
-      /* Verifica mudanças no Scroll e salva no localStorage a posição */
+      // Verifica mudanças no Scroll e salva no localStorage a posição
        window.onscroll = function(e) {
         setPosicao(window.scrollY);
         localStorage.setItem("posicaoScroll", JSON.stringify(posicao));
-      }           
-      
+      }
+
         return () => {};
       }, [posicao, page, setPosicao]);
 
+    */
 
-    useEffect(() => {
+  /* useEffect(() => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+    }, [handleScroll]);
 
 
-    /* Scroll infinito nao ta funcionando pq nao ta disparando evento ao chegar no final da pagina, talvez calculo esteja errado */
+    /Scroll infinito nao ta funcionando pq nao ta disparando evento ao chegar no final da pagina, talvez calculo esteja errado /
     async function handleScroll() {
 
         console.log(document.documentElement.scrollTop);
@@ -96,44 +119,49 @@ export default function Main({ history, match }){
         } else {
             return;
         }
-    }  
-
-    async function fetchMoreListItems(pagecount) {        
-        
-        const response = await api.get(`/posts?_start=${pagecount * 10}&_limit=10`);       
-
-        setPosts(prevState => ([...prevState, ...response.data]));    
     }
 
-    //------
+    async function fetchMoreListItems(pagecount) {
 
-    return (
-        <div className="main">           
-    
-        <Navbar2/>
-              
-               <div className="main-container">        
+        const response = await api.get(`/posts?_start=${pagecount * 10}&_limit=10`);
 
-                    { posts.length > 0 ? (
-                    <ul id="ullist" className={"main-container ul"+layout}> 
-                        {posts.map(post => (
-                            <Link to={`/posts/${post.id}`} >
-                                <li id="lilist" className={"main-container li"+layout} key={post.id}>
+        //Agora seta via Redux
+        //setPosts(prevState => ([...prevState, ...response.data]));
+        //dataSave(response.data); // Isso é equivalente a linha acima?
 
-                                    <img src='https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png'/>
-                       
-                                    <footer>                                       
-                                        <strong>{post.title}</strong>                                       
-                                    </footer>
-                                
-                                </li>
-                            </Link>
-                        ))}     
-                    </ul>     
-                    ) : (
-                        <div className="empty">Nenhum Post :(</div>
-                    ) }    
-            </div>
-        </div>
-    );
+    } */
+
+  //------
+
+  return (
+    <div className="main">
+      <Navbar2 />
+
+      <div className="main-container">
+        {posters.length > 0 ? (
+          <ul id="ullist" className={`main-container ul${layout}`}>
+            {posters.map(post => (
+              <Link to={`/posts/${post.id}`}>
+                <li
+                  id="lilist"
+                  className={`main-container li${layout}`}
+                  key={post.id}
+                >
+                  <img
+                    src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
+                    alt="Avatar"
+                  />
+                  <footer>
+                    <strong>{post.title}</strong>
+                  </footer>
+                </li>
+              </Link>
+            ))}
+          </ul>
+        ) : (
+          <div className="empty">Nenhum Post :(</div>
+        )}
+      </div>
+    </div>
+  );
 }

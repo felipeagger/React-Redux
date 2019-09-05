@@ -1,14 +1,14 @@
 import React from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 
 import Main from './pages/Main';
 import Detalhe from './pages/Detalhe';
 
-export default function Routes(){
-    return (        
-        <BrowserRouter>
-        <Route path="/" exact component={Main} />
-        <Route path="/posts/:id" exact component={Detalhe} />
-        </BrowserRouter>
-    );
+export default function Routes() {
+  return (
+    <Switch>
+      <Route path="/" exact component={Main} />
+      <Route path="/posts/:id" component={Detalhe} />
+    </Switch>
+  );
 }
