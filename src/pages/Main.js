@@ -54,7 +54,7 @@ export default function Main({ history, match }) {
       // console.log('Estado no Redux');
       // console.log(posts);
 
-      page = 1;
+      //page = 1;
 
       if (isMobile) {
         setLayout('mob');
@@ -77,7 +77,12 @@ export default function Main({ history, match }) {
             }, 1);
         }
         */
+
       setPosters(response.data);
+
+      //dispatch(addPostRequest(response.data));
+
+      //console.log(posts);
     }
 
     loadDados();
@@ -97,24 +102,21 @@ export default function Main({ history, match }) {
 
     */
 
-  /* useEffect(() => {
+   useEffect(() => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, [handleScroll]);
 
 
-    /Scroll infinito nao ta funcionando pq nao ta disparando evento ao chegar no final da pagina, talvez calculo esteja errado /
+    //Scroll infinito nao ta funcionando corretamente pq nao ta disparando evento ao chegar no final da pagina, talvez calculo esteja errado /
     async function handleScroll() {
 
-        console.log(document.documentElement.scrollTop);
+        //if (((document.documentElement.scrollTop) / (page * window.innerHeight)) / page >= 5.80) {
+        if (((document.documentElement.scrollTop) / 1200) >= page) {
 
-         //if (((document.documentElement.scrollTop) / (page * window.innerHeight)) / page >= 5.80) {
-        if (((document.documentElement.scrollTop) / 1350) >= page) {
+            setPage(page + 1); 
 
-            page = page + 1;
-
-            //Comentei para nao da erro
-            fetchMoreListItems(page - 1);
+            fetchMoreListItems(page - 1);            
 
         } else {
             return;
@@ -126,10 +128,9 @@ export default function Main({ history, match }) {
         const response = await api.get(`/posts?_start=${pagecount * 10}&_limit=10`);
 
         //Agora seta via Redux
-        //setPosts(prevState => ([...prevState, ...response.data]));
-        //dataSave(response.data); // Isso é equivalente a linha acima?
+        setPosters(prevState => ([...prevState, ...response.data]));
 
-    } */
+    } 
 
   //------
 
@@ -148,7 +149,7 @@ export default function Main({ history, match }) {
                   key={post.id}
                 >
                   <img
-                    src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
+                    src="https://upload.wikimedia.org/wikipedia/commons/d/d7/Post-It.jpg"
                     alt="Avatar"
                   />
                   <footer>

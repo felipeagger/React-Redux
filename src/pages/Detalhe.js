@@ -36,7 +36,7 @@ export default function Detalhe({ match }) {
       <Navbar />
       <div className={`detalhe-container${layout}`}>
         <img
-          src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
+          src="https://upload.wikimedia.org/wikipedia/commons/d/d7/Post-It.jpg"
           alt="Avatar"
         />
 

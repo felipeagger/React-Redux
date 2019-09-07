@@ -8,6 +8,7 @@ export default function posts(state = INITIAL_STATE, action) {
   return produce(state, draft => {
     switch (action.type) {
       case '@posts/ADD_POSTS_SUCCESS': {
+        console.log('Bateu reducer..');
         draft.posts = action.payload.posts;
         break;
       }
