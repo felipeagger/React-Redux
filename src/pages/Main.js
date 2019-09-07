@@ -13,14 +13,14 @@ import api from '../services/api';
 
 import { addPostRequest } from '../store/modules/post/actions';
 
-export default function Main({ history, match }) {
+export default function Main() {
   const dispatch = useDispatch();
   const posts = useSelector(state => state.posts);
 
   /* Nao e mais um state local */
   const [posters, setPosters] = useState([]);
 
-  let [page, setPage] = useState(1);
+  const [page, setPage] = useState(1);
 
   /*
     if (localStorage.getItem("posicaoScroll") === undefined &&
@@ -40,21 +40,7 @@ export default function Main({ history, match }) {
 
   useEffect(() => {
     async function loadDados() {
-      const response = await api.get('/posts?_start=0&_limit=10');
-
-      // Agora seta via redux
-      // setPosts(response.data);
-
-      // console.log('Get da API');
-      // console.tron.log(response.data);
-
-      // dataSave(response.data);
-
-      // Teoricamente era para aparecer os posts no console agora
-      // console.log('Estado no Redux');
-      // console.log(posts);
-
-      //page = 1;
+      const response = await api.get(`/posts?_limit=${page}0`);
 
       if (isMobile) {
         setLayout('mob');
@@ -79,14 +65,10 @@ export default function Main({ history, match }) {
         */
 
       setPosters(response.data);
-
-      //dispatch(addPostRequest(response.data));
-
-      //console.log(posts);
     }
 
     loadDados();
-  }, []);
+  }, [page, posters]);
 
   /*
     useEffect(() => {
@@ -102,37 +84,9 @@ export default function Main({ history, match }) {
 
     */
 
-   useEffect(() => {
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, [handleScroll]);
-
-
-    //Scroll infinito nao ta funcionando corretamente pq nao ta disparando evento ao chegar no final da pagina, talvez calculo esteja errado /
-    async function handleScroll() {
-
-        //if (((document.documentElement.scrollTop) / (page * window.innerHeight)) / page >= 5.80) {
-        if (((document.documentElement.scrollTop) / 1200) >= page) {
-
-            setPage(page + 1); 
-
-            fetchMoreListItems(page - 1);            
-
-        } else {
-            return;
-        }
-    }
-
-    async function fetchMoreListItems(pagecount) {
-
-        const response = await api.get(`/posts?_start=${pagecount * 10}&_limit=10`);
-
-        //Agora seta via Redux
-        setPosters(prevState => ([...prevState, ...response.data]));
-
-    } 
-
-  //------
+  function handlePagination(result) {
+    setPage(result === 'prev' ? page - 1 : page + 1);
+  }
 
   return (
     <div className="main">
@@ -140,25 +94,36 @@ export default function Main({ history, match }) {
 
       <div className="main-container">
         {posters.length > 0 ? (
-          <ul id="ullist" className={`main-container ul${layout}`}>
-            {posters.map(post => (
-              <Link to={`/posts/${post.id}`}>
-                <li
-                  id="lilist"
-                  className={`main-container li${layout}`}
-                  key={post.id}
-                >
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/d/d7/Post-It.jpg"
-                    alt="Avatar"
-                  />
-                  <footer>
-                    <strong>{post.title}</strong>
-                  </footer>
-                </li>
-              </Link>
-            ))}
-          </ul>
+          <>
+            <ul id="ullist" className={`main-container ul${layout}`}>
+              {posters.map(post => (
+                <Link to={`/posts/${post.id}`} key={post.id}>
+                  <li id="lilist" className={`main-container li${layout}`}>
+                    <img
+                      src="https://upload.wikimedia.org/wikipedia/commons/d/d7/Post-It.jpg"
+                      alt="Avatar"
+                    />
+                    <footer>
+                      <strong>{post.title}</strong>
+                    </footer>
+                  </li>
+                </Link>
+              ))}
+            </ul>
+            <div>
+              <button
+                type="button"
+                disabled={page < 2}
+                onClick={() => handlePagination('prev')}
+              >
+                Prev
+              </button>
+              <span>Page {page}</span>
+              <button type="button" onClick={() => handlePagination('next')}>
+                Next
+              </button>
+            </div>
+          </>
         ) : (
           <div className="empty">Nenhum Post :(</div>
         )}
